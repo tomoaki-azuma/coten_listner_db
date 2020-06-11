@@ -1,0 +1,260 @@
+
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>COTEN LISTENER</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css" integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
+    <link rel="stylesheet" href="css/style.css">
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-169185052-1"></script>
+
+</head>
+<body>
+
+    <div class="container-xs pt-3 mx-5">
+        <div id="app">
+
+        <div class="sticky-top ">
+            <div class="row d-flex justify-content-center bg-primary text-white p-2">
+                <div><h3 class="m-0 mx-2">COTEN LISTENER</h3></div>
+            </div>
+            <div class="row mt-3">
+                <div class="mx-2">
+                    <i class="fas fa-list-ol fa-2x" @click="display_all"></i>
+                </div>
+                <div class="mx-3">
+                    <i class="fas fa-search fa-2x" data-toggle="modal" data-target="#myModal" @click="modify_themes()"></i>
+                </div>
+                <div class="mx-3">
+                    <i class="fas fa-book fa-2x" data-toggle="modal" data-target="#bookModal"></i>
+                </div>
+                <div class="mx-3">
+                    <i class="far fa-question-circle fa-2x" data-toggle="modal" data-target="#aboutModal"></i>
+                </div>
+             </div>
+                
+            <div v-show="ytplay_flg">
+                <div class="row d-flex justify-content-center bg-light">
+                    <div id="ytarea"></div>
+                    <p @click="closeYT">
+                    <i class="far fa-times-circle fa-2x"></i>
+                    </p>
+                </div>
+            </div>
+        </div>
+        <!-- modal area -->
+        <div class="modal fade" id="myModal">
+            <div class="modal-dialog">
+                <div class="modal-content">
+
+                    <!-- Modal Header -->
+                    <div class="modal-header">
+                        <h5 class="modal-title">Search by...</h5>
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    </div>
+
+
+
+                    <!-- Modal body -->
+                    <div class="modal-body">
+                        <ul class="nav nav-tabs">
+                            <li class="nav-item">
+                            <a href="#theme" class="nav-link active" data-toggle="tab">theme</a>
+                            </li>
+                            <li class="nav-item">
+                            <a href="#tag" class="nav-link" data-toggle="tab">tag</a>
+                            </li>
+                            <li class="nav-item">
+                            <a href="#keyword" class="nav-link" data-toggle="tab">keyword</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="tab-content d-flex justify-content-center">
+                        <div id="theme" class="tab-pane active">
+                            <div v-for="row_idx in Math.floor(themes.length/3)">
+                                <div class="d-inline-flex p-2 full-fix justify-content-around align-items-start">
+                                    <div v-for="idx in 3">
+                                        <template v-if="themes[(row_idx-1)*3 + (idx-1)].length != 0">
+                                            <div class="p-1">
+                                                <div class="card" style="width:100px; height:160px" @click="search_theme(themes[(row_idx-1)*3 + (idx-1)].id)" class="">
+                                                <img class="img-responsive center-block" v-bind:src="themes[(row_idx-1)*3 + (idx-1)].img" alt="Card image">
+                                                <div class="card-body p-1">
+                                                  <p class="card-text" v-cloak>{{ themes[(row_idx-1)*3 + (idx-1)].title}}</p>
+                                                </div>
+                                              </div>
+                                            </div>
+                                        </template>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="tag" class="tab-pane">
+                            Sorry, Under constructing ...
+                        </div>
+                        <div id="keyword" class="tab-pane">
+                            Sorry, Under constructing ...
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- book modal area -->
+        <div class="modal fade" id="bookModal">
+            <div class="modal-dialog">
+                <div class="modal-content">
+
+                    <!-- Modal Header -->
+                    <div class="modal-header">
+                        <h5 class="modal-title">Coten Radio 参考文献</h5>
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    </div>
+                    <!-- Modal body -->
+                    <div class="m-3">
+                        <div v-for="(value,key,index) in book_json">
+                            <h5 class="book_title my-2">{{ themes[key-1].title }}</h5>
+                            <ul class="mx-0 px-4">
+                                    <div v-for="v in value">
+                                        <li>
+                                            <a v-bind:href="v[1]" target="_blank">{{ v[0] }}</a>
+                                        </li>
+                                        
+                                    </div>
+                            </ul>
+
+                        </div>
+
+                    </div>
+                   
+                    
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="aboutModal">
+            <div class="modal-dialog">
+                <div class="modal-content">
+
+                    <!-- Modal Header -->
+                    <div class="modal-header">
+                        <h5 class="modal-title">About this site</h5>
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    </div>
+                    <!-- Modal body -->
+                    <div class="m-3">
+                        <div class="my-3">
+                            <h5 class="book_title my-2">COTEN LISTNER とは？</h5>
+                            <div>
+                                「歴史を面白く学ぶコテンラジオ」を楽しみやすくお手伝いするウェブページ（アプリです）。
+                                特にユーザー登録等は必要なくお使いいただけます。 
+                            </div>
+                        </div>
+                        <div class="my-3">
+                            <h5 class="book_title my-2">COTEN RADIOって？</h5>
+                            <div class="px-3">
+                                <div class="">
+                                    え、まさかここにたどり着いていてご存知ない！？<br><br>
+                                    コテンラジオとは、「歴史を愛し、歴史を知りすぎてしまった歴史GEEKどもがお届けする歴史インターネットラジオ」。<br>
+                                    歴史のプロである株式会社コテンの深井さん、ヤンヤンさんと自称（？）歴史弱者である株式会社Bookの樋口さんが日本と世界の歴史を「面白く」、「おかしく」
+                                    そして「ディープ」に語っています。<br><br>
+                                    第１回 JAPAN PODCAST AWARDS 2019では見事大賞を獲得！！<br><br>
+                                </div>
+                                <div class="row">
+                                    <div class="col">
+                                        <img src="img/cotenlogo.jpg" alt="" class="img-fluid">
+                                    </div>
+                                    <div class="col">
+                                        <img src="img/podcastward.png" alt="" class="img-fluid">
+                                    </div>
+                                </div>
+                                
+                            </div>
+                        </div>
+                        <div class="my-3">
+                            <h5 class="book_title my-2">操作方法</h5>
+                            <div class="px-3">
+                                小学生からお年寄りまで簡単に操作できることを目指してわかりやすくしています。ポイントのみ説明します。<br><br>
+                            </div>
+                            <div class="px-3">
+                                <div class="">
+                                    <div class="my-2">
+                                        <i class="fas fa-list-ol"></i><br>
+                                        検索などにより絞り込みがされた状態で押すと全部の番組を表示します。全部表示されている時は何もおこりません。
+                                    </div>
+                                    <div class="my-2">
+                                        <i class="fas fa-sort"></i><br>
+                                        表示されている番組をソートします。ソートは一覧に表示のあるPodcastの配信日によります。
+                                    </div>
+                                    <div class="my-2">
+                                        <i class="fab fa-youtube"></i><br>
+                                        Youtubeを再生します。読み込めない時がありますが再度押すと大丈夫です（改良検討中）。
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="my-3">
+                            <h5 class="book_title my-2">管理人より</h5>
+                            <div class="px-3">
+                                コテンラジオにハマり、聞きたい回にすぐにアクセスしたい。という思いが高じてこのサイトを作成しました。
+                                少しでも皆様の視聴の助けになれば嬉しいです。<br>
+                                もう一つのモチベーションとしては、コテンラジオの発信場所が私の出身地である福岡県田川市の<a href="http://palette.jp.net/" target="_blank">いいかねPalette</a>（しかも私の実家から歩いて行ける距離！）であるということも
+                                あります。コテンラジオが盛り上がり、それきっかけでちょっとでも田川市（まあ田舎ですよw）を知ってもらえたら嬉しいです。<br><br>
+                                また、このサイトは私の趣味・学習の一環として作成しており、至らない点はご容赦ください。随時アップデートしていきます。<br><br>
+                                ご意見、ご要望などありましたらtwitter(<a href="https://twitter.com/TomoakiAzuma" target="_blank">tomoro</a>)まで。
+                            </div>
+                            
+                        </div>
+
+                    </div>
+                   
+                    
+                </div>
+            </div>
+        </div>
+
+        <div>
+            <div class="d-flex mx-0 mt-3">
+                <div><i class="fas fa-sort fa-2x" @click="sort_change()"></i></div>
+            </div>
+            <div v-for="data in searched_program" class="border border-left-0 border-right-0 border-top-0 my-1 py-1 mx-1 px-0">
+                <div class="row">
+                    <div class="text-left px-0"><small v-cloak>{{ data['delivery_date'] }}</small></div>
+                </div>
+                <div class="row">
+                    <div class="text-left px-0" v-cloak>{{ episode_num(data['num']) }} {{ data['title'] }} </div>
+                </div>
+                <div class="row d-flex justify-content-end align-self-end">
+                     <div class="mx-2">
+                        <a target="_blank" v-bind:href="'https://podcasts.google.com'+ data['google_podcast_url']">
+                            <i class="fas fa-podcast fa-2x"></i>
+                        </a>
+                    </div>
+                    <div class="mx-2">
+                        <p @click="playYT(data['youtube_url'])">
+                            <i class="fab fa-youtube fa-2x"></i>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+            
+            </div>
+
+        </div>
+    </div>
+    
+
+
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.5.16/dist/vue.js"></script>
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <!-- Popper JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>
